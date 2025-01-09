@@ -10,6 +10,9 @@ interface DropdownSelectProps {
   options: { value: string; label: string }[];
   onChange: (value: string) => void;
   isSearchable: boolean;
+  value?: string;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export default function DropdownSelect({
@@ -17,6 +20,9 @@ export default function DropdownSelect({
   options,
   onChange,
   isSearchable,
+  value,
+  open,
+  onOpenChange,
 }: DropdownSelectProps) {
   const {
     selectedOption,
@@ -30,7 +36,14 @@ export default function DropdownSelect({
     optionsRef,
     handleOptionSelect,
     toggleDropdown,
-  } = useDropdown({ options, onChange, isSearchable });
+  } = useDropdown({
+    options,
+    onChange,
+    isSearchable,
+    value,
+    open,
+    onOpenChange,
+  });
 
   return (
     <div

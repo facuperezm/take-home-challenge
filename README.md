@@ -2,15 +2,11 @@
 
 ## Introduction
 
-Thank you for your interest in joining our team as a Senior Frontend Engineer. As part of our hiring process, we'd like to assess your technical skills, problem-solving abilities, and attention to detail through a take-home assignment. This exercise is designed to evaluate not just your coding skills but also your understanding of user experience and design principles. While we estimate that this task should take a few hours, feel free to invest additional time to add any extra features or polish that you think would make your solution stand out.
-
-## Objective
-
-Your primary task is to develop a reusable Dropdown Select component using NextJS. This component should allow users to select a single option from a list and should be versatile enough to be used in forms and multiple instances on the same page.
+Thank you for considering me for the Senior Frontend Engineer position at Storied. This is my solution to the take-home assignment.
 
 ## Component API Example
 
-Here's what the component API should look like:
+Here's how the component works:
 
 ```jsx
 const options = [
