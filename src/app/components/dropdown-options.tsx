@@ -53,9 +53,9 @@ export default function DropdownOptions({
             onClick={() => onOptionSelect(option)}
             className={cn(
               "px-4 py-2 cursor-pointer hover:bg-[#9fc3f870]",
-              highlightedIndex === index && "bg-[#9fc3f870]",
               selectedOption?.value === option.value &&
-                "bg-[#0d6efd] text-white"
+                "bg-[#0d6efd] text-white",
+              highlightedIndex === index && "bg-[#9fc3f870] text-gray-800"
             )}
           >
             {option.label}

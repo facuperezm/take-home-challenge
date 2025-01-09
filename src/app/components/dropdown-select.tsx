@@ -58,6 +58,7 @@ export default function DropdownSelect({
       }}
     >
       <button
+        data-testid="dropdown-trigger"
         onClick={() => toggleDropdown()}
         className="w-full px-4 py-2 text-left bg-white border border-gray-300 rounded-md flex items-center justify-between"
       >

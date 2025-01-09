@@ -2,6 +2,7 @@
 import { useState } from "react";
 import DropdownSelect from "./components/dropdown-select";
 import { cn } from "./utils";
+import Image from "next/image";
 
 export default function Home() {
   const [isOpen, setIsOpen] = useState(true);
@@ -22,12 +23,23 @@ export default function Home() {
 
   return (
     <main className="flex flex-col items-center justify-items-center px-8 pt-20 gap-16 min-h-screen ">
-      <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-        Take Home Assignment
-      </h1>
+      <div className="flex flex-col items-center justify-between">
+        <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+          Take Home Assignment
+        </h1>
+        <Image
+          src="/storied-logo.svg"
+          alt=""
+          className="w-32 mt-2"
+          width={192}
+          height={192}
+        />
+      </div>
       <div className="flex flex-1 flex-row gap-16">
         <article>
-          <h2>Controlled Dropdown</h2>
+          <h2 className="scroll-m-20 text-lg font-semibold tracking-tight">
+            Controlled Dropdown
+          </h2>
           <div className="flex flex-row gap-2 mb-2 items-center">
             <button
               className="bg-white rounded-md border text-sm border-gray-200 px-2 py-1 "
@@ -59,7 +71,9 @@ export default function Home() {
         </article>
 
         <article>
-          <h2>Uncontrolled Dropdown</h2>
+          <h2 className="scroll-m-20 text-lg font-semibold tracking-tight">
+            Uncontrolled Dropdown
+          </h2>
           <DropdownSelect
             label="Select color"
             options={options}
@@ -69,7 +83,9 @@ export default function Home() {
         </article>
 
         <article>
-          <h2>Uncontrolled Dropdown with no search</h2>
+          <h2 className="scroll-m-20 text-lg font-semibold tracking-tight">
+            Uncontrolled Dropdown with no search
+          </h2>
           <DropdownSelect
             label="Select color"
             options={options}

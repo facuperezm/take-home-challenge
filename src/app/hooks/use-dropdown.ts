@@ -73,6 +73,9 @@ export function useDropdown({
     (e: KeyboardEvent) => {
       if (!isOpen) return;
 
+      if (!isOpen || !containerRef.current?.contains(document.activeElement))
+        return;
+
       switch (e.key) {
         case "ArrowDown":
           e.preventDefault();
@@ -89,6 +92,7 @@ export function useDropdown({
           });
           break;
         case "Enter":
+          e.preventDefault();
           if (highlightedIndex >= 0) {
             const selectedOption = filteredOptions[highlightedIndex];
             handleOptionSelect(selectedOption);
@@ -135,6 +139,7 @@ export function useDropdown({
 
     if (isOpenControlled) {
       // In controlled mode, call the callback
+
       onOpenChange?.(newIsOpen);
     } else {
       // In uncontrolled mode, update internal state
@@ -144,7 +149,6 @@ export function useDropdown({
 
   // reset the highlighted index when the search query or the dropdown is opened
   // otherwise the highlighted index will be stuck on the last option
-
   useEffect(() => {
     if (!uncontrolledIsOpen) setHighlightedIndex(-1);
   }, [uncontrolledIsOpen]);
@@ -152,6 +156,17 @@ export function useDropdown({
   useEffect(() => {
     if (searchQuery) setHighlightedIndex(-1);
   }, [searchQuery]);
+
+  // focus the search input when the dropdown is opened and the search is enabled
+  useEffect(() => {
+    if (isOpen && isSearchable) {
+      // Small delay to ensure the dropdown is rendered
+      const timeoutId = setTimeout(() => {
+        searchInputRef.current?.focus();
+      }, 0);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [isOpen, isSearchable]);
 
   return {
     selectedOption: uncontrolledSelectedOption,
