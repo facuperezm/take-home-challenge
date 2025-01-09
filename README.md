@@ -13,9 +13,9 @@ https://dropdown-facundo.vercel.app
 ## 🛠️ Installation
 
 ```bash
-git clone https://github.com/facuperezm/dropdown-select-component
+git clone https://github.com/facuperezm/take-home-challenge.git
 
-cd dropdown-select-component
+cd take-home-challenge
 
 pnpm i
 
