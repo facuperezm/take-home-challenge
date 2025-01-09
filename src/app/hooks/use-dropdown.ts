@@ -51,7 +51,11 @@ export function useDropdown({
     (option: { value: string; label: string } | null) => {
       const isDeselecting = uncontrolledSelectedOption?.value === option?.value;
       setUncontrolledSelectedOption(isDeselecting ? null : option);
-      onChange(option?.value ?? "");
+      onChange(
+        isDeselecting
+          ? `deselected: ${option?.value}`
+          : `selected: ${option?.value}`
+      );
 
       if (isOpenControlled) {
         onOpenChange?.(false);
