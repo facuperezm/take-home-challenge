@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import DropdownOptions from "./dropdown-options";
 import DropdownIcon from "./dropdown-icon";
+import { cn } from "../utils";
+import { useDropdown } from "../hooks/use-dropdown";
 
 interface DropdownSelectProps {
   label: string;
@@ -17,36 +18,41 @@ export default function DropdownSelect({
   onChange,
   isSearchable,
 }: DropdownSelectProps) {
-  const [selectedOption, setSelectedOption] = useState<{
-    value: string;
-    label: string;
-  } | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
-
-  const filteredOptions = options.filter((option) =>
-    option.label.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const handleOptionSelect = (option: { value: string; label: string }) => {
-    setSelectedOption(option);
-    onChange(option.value);
-    setIsOpen(false);
-  };
+  const {
+    selectedOption,
+    searchQuery,
+    setSearchQuery,
+    isOpen,
+    highlightedIndex,
+    filteredOptions,
+    containerRef,
+    searchInputRef,
+    optionsRef,
+    handleOptionSelect,
+    toggleDropdown,
+  } = useDropdown({ options, onChange, isSearchable });
 
   return (
-    <div className="relative w-[300px]">
+    <div
+      ref={containerRef}
+      className="relative w-[300px]"
+      onKeyDown={(e) => {
+        // if the dropdown is not open and the user presses enter or space, then open the dropdown
+        if (!isOpen && (e.key === "Enter" || e.key === " ")) {
+          e.preventDefault();
+          toggleDropdown();
+        }
+      }}
+    >
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => toggleDropdown()}
         className="w-full px-4 py-2 text-left bg-white border border-gray-300 rounded-md flex items-center justify-between"
       >
         <span className="text-gray-700">
           {selectedOption ? selectedOption.label : label}
         </span>
         <DropdownIcon
-          className={`w-4 h-4 transition-transform ${
-            isOpen ? "rotate-180" : ""
-          }`}
+          className={cn("transition-transform", isOpen && "rotate-180")}
         />
       </button>
       <DropdownOptions
@@ -57,6 +63,9 @@ export default function DropdownSelect({
         filteredOptions={filteredOptions}
         selectedOption={selectedOption}
         onOptionSelect={handleOptionSelect}
+        optionsRef={optionsRef}
+        searchInputRef={searchInputRef}
+        highlightedIndex={highlightedIndex}
       />
     </div>
   );

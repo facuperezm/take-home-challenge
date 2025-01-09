@@ -1,4 +1,5 @@
-"use client";
+import { RefObject } from "react";
+import { cn } from "../utils";
 
 interface Option {
   value: string;
@@ -12,6 +13,9 @@ interface DropdownOptionsProps {
   setSearchQuery: (query: string) => void;
   filteredOptions: Option[];
   selectedOption: Option | null;
+  highlightedIndex: number;
+  optionsRef: RefObject<HTMLUListElement | null>;
+  searchInputRef: RefObject<HTMLInputElement | null>;
   onOptionSelect: (option: Option) => void;
 }
 
@@ -22,6 +26,9 @@ export default function DropdownOptions({
   setSearchQuery,
   filteredOptions,
   selectedOption,
+  highlightedIndex,
+  optionsRef,
+  searchInputRef,
   onOptionSelect,
 }: DropdownOptionsProps) {
   if (!isOpen) return null;
@@ -32,22 +39,24 @@ export default function DropdownOptions({
         <div className="p-2 border-b border-gray-300">
           <input
             type="text"
+            ref={searchInputRef}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
       )}
-      <ul className="max-h-60 overflow-auto">
-        {filteredOptions.map((option) => (
+      <ul ref={optionsRef} className="max-h-60 overflow-auto">
+        {filteredOptions.map((option, index) => (
           <li
             key={option.value}
             onClick={() => onOptionSelect(option)}
-            className={`px-4 py-2 cursor-pointer hover:bg-[#9fc3f870]  ${
-              selectedOption?.value === option.value
-                ? "bg-[#0d6efd] text-white hover:text-gray-800"
-                : ""
-            }`}
+            className={cn(
+              "px-4 py-2 cursor-pointer hover:bg-[#9fc3f870]",
+              highlightedIndex === index && "bg-[#9fc3f870]",
+              selectedOption?.value === option.value &&
+                "bg-[#0d6efd] text-white"
+            )}
           >
             {option.label}
           </li>
