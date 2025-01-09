@@ -35,7 +35,7 @@ export default function Home() {
           height={192}
         />
       </div>
-      <div className="flex flex-1 flex-row gap-16">
+      <div className="flex flex-1 flex-row gap-16 flex-wrap justify-center">
         <article>
           <h2 className="scroll-m-20 text-lg font-semibold tracking-tight">
             Controlled Dropdown
