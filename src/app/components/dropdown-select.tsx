@@ -60,7 +60,7 @@ export default function DropdownSelect({
         selectedOption={selectedOption}
         onOptionSelect={handleOptionSelect}
         options={options}
-        onClose={() => toggleDropdown()}
+        onClose={toggleDropdown}
       />
     </div>
   );
