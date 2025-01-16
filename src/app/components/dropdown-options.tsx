@@ -65,6 +65,8 @@ export default function DropdownOptions({
           e.preventDefault();
           if (highlightedIndex >= 0) {
             onOptionSelect(filteredOptions[highlightedIndex]);
+            setSearchQuery("");
+            setHighlightedIndex(-1);
           }
           break;
         case "Tab":
@@ -80,26 +82,25 @@ export default function DropdownOptions({
           break;
         case "Escape":
           e.preventDefault();
+          setSearchQuery("");
           onClose();
+          setHighlightedIndex(-1);
           break;
       }
     };
 
     // add event listener for keyboard navigation
     window.addEventListener("keydown", handleKeyDown);
+
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, filteredOptions, highlightedIndex, onOptionSelect, onClose]);
 
   // focus the search input when the dropdown is opened and the search is enabled
   useEffect(() => {
     if (isOpen && isSearchable) {
-      // Small delay to ensure the dropdown is rendered
-      const timeoutId = setTimeout(() => {
-        searchInputRef.current?.focus();
-      }, 0);
-      return () => clearTimeout(timeoutId);
+      searchInputRef.current?.focus();
     }
-  }, [isOpen, isSearchable, searchInputRef]);
+  }, [isOpen, isSearchable]);
 
   if (!isOpen) return null;
 
