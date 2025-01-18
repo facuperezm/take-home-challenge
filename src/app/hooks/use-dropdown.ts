@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, useCallback, useMemo } from "react";
+import { useRef, useState } from "react";
 
 interface DropdownSelectProps {
   options: { value: string; label: string }[];
@@ -23,9 +23,8 @@ export function useDropdown({
   } | null>(() =>
     value ? options.find((opt) => opt.value === value) || null : null
   );
-  const [searchQuery, setSearchQuery] = useState("");
   const [uncontrolledIsOpen, setUncontrolledIsOpen] = useState(false);
-  const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   // Check if we're in controlled mode
   const isOpenControlled = open !== undefined;
@@ -34,155 +33,43 @@ export function useDropdown({
   // otherwise, use the internal state
   const isOpen = isOpenControlled ? open : uncontrolledIsOpen;
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  const optionsRef = useRef<HTMLUListElement>(null);
-  const searchInputRef = useRef<HTMLInputElement>(null);
+  const handleOptionSelect = (
+    option: { value: string; label: string } | null
+  ) => {
+    const isDeselecting = uncontrolledSelectedOption?.value === option?.value;
+    setUncontrolledSelectedOption(isDeselecting ? null : option);
+    onChange(
+      isDeselecting
+        ? `deselected: ${option?.value}`
+        : `selected: ${option?.value}`
+    );
 
-  // derived state for the filtered options
-  const filteredOptions = useMemo(
-    () =>
-      options.filter((option) =>
-        option.label.toLowerCase().includes(searchQuery.toLowerCase())
-      ),
-    [options, searchQuery]
-  );
-
-  const handleOptionSelect = useCallback(
-    (option: { value: string; label: string } | null) => {
-      const isDeselecting = uncontrolledSelectedOption?.value === option?.value;
-      setUncontrolledSelectedOption(isDeselecting ? null : option);
-      onChange(
-        isDeselecting
-          ? `deselected: ${option?.value}`
-          : `selected: ${option?.value}`
-      );
-
-      if (isOpenControlled) {
-        onOpenChange?.(false);
-      } else {
-        setUncontrolledIsOpen(false);
-      }
-      containerRef.current?.focus();
-    },
-    [
-      uncontrolledSelectedOption?.value,
-      onChange,
-      isOpenControlled,
-      onOpenChange,
-    ]
-  );
-
-  // handle keyboard navigation
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (!isOpen) return;
-
-      if (!isOpen || !containerRef.current?.contains(document.activeElement))
-        return;
-
-      switch (e.key) {
-        case "ArrowDown":
-          e.preventDefault();
-          setHighlightedIndex((prev) => {
-            if (prev >= filteredOptions.length - 1 || prev === -1) return 0;
-            return prev + 1;
-          });
-          break;
-        case "ArrowUp":
-          e.preventDefault();
-          setHighlightedIndex((prev) => {
-            if (prev <= 0) return filteredOptions.length - 1;
-            return prev - 1;
-          });
-          break;
-        case "Enter":
-          e.preventDefault();
-          if (highlightedIndex >= 0) {
-            const selectedOption = filteredOptions[highlightedIndex];
-            handleOptionSelect(selectedOption);
-          }
-          break;
-
-        case "Tab":
-          e.preventDefault();
-          setHighlightedIndex((prev) => {
-            if (e.shiftKey) {
-              if (prev <= 0) return filteredOptions.length - 1;
-              return prev - 1;
-            }
-            if (prev >= filteredOptions.length - 1 || prev === -1) return 0;
-            return prev + 1;
-          });
-          break;
-        case "Escape":
-          e.preventDefault();
-          if (!isOpenControlled) setUncontrolledIsOpen(false);
-          containerRef.current?.focus();
-          break;
-      }
-    },
-    [
-      isOpen,
-      filteredOptions,
-      highlightedIndex,
-      handleOptionSelect,
-      isOpenControlled,
-    ]
-  );
-
-  // add event listener for keyboard navigation
-  useEffect(() => {
-    if (isOpen) {
-      window.addEventListener("keydown", handleKeyDown);
-      return () => window.removeEventListener("keydown", handleKeyDown);
+    if (isOpenControlled) {
+      onOpenChange?.(false);
+    } else {
+      setUncontrolledIsOpen(false);
     }
-  }, [isOpen, handleKeyDown]);
+    buttonRef.current?.focus();
+  };
 
-  const toggleDropdown = useCallback(() => {
+  const toggleDropdown = () => {
     const newIsOpen = !isOpen;
 
     if (isOpenControlled) {
-      // In controlled mode, call the callback
-
       onOpenChange?.(newIsOpen);
     } else {
-      // In uncontrolled mode, update internal state
       setUncontrolledIsOpen(newIsOpen);
     }
-  }, [isOpen, isOpenControlled, onOpenChange]);
-
-  // reset the highlighted index when the search query or the dropdown is opened
-  // otherwise the highlighted index will be stuck on the last option
-  useEffect(() => {
-    if (!uncontrolledIsOpen) setHighlightedIndex(-1);
-  }, [uncontrolledIsOpen]);
-
-  useEffect(() => {
-    if (searchQuery) setHighlightedIndex(-1);
-  }, [searchQuery]);
-
-  // focus the search input when the dropdown is opened and the search is enabled
-  useEffect(() => {
-    if (isOpen && isSearchable) {
-      // Small delay to ensure the dropdown is rendered
-      const timeoutId = setTimeout(() => {
-        searchInputRef.current?.focus();
-      }, 0);
-      return () => clearTimeout(timeoutId);
+    if (!newIsOpen) {
+      buttonRef.current?.focus();
     }
-  }, [isOpen, isSearchable]);
+  };
 
   return {
     selectedOption: uncontrolledSelectedOption,
-    searchQuery,
-    setSearchQuery,
     isOpen,
-    highlightedIndex,
-    filteredOptions,
-    containerRef,
+    buttonRef,
     isSearchable,
-    searchInputRef,
-    optionsRef,
     handleOptionSelect,
     toggleDropdown,
   };

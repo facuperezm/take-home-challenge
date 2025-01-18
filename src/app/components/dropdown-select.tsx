@@ -26,14 +26,8 @@ export default function DropdownSelect({
 }: DropdownSelectProps) {
   const {
     selectedOption,
-    searchQuery,
-    setSearchQuery,
     isOpen,
-    highlightedIndex,
-    filteredOptions,
-    containerRef,
-    searchInputRef,
-    optionsRef,
+    buttonRef,
     handleOptionSelect,
     toggleDropdown,
   } = useDropdown({
@@ -46,18 +40,9 @@ export default function DropdownSelect({
   });
 
   return (
-    <div
-      ref={containerRef}
-      className="relative w-[300px]"
-      onKeyDown={(e) => {
-        // if the dropdown is not open and the user presses enter or space, then open the dropdown
-        if (!isOpen && (e.key === "Enter" || e.key === " ")) {
-          e.preventDefault();
-          toggleDropdown();
-        }
-      }}
-    >
+    <div className="relative w-[300px]">
       <button
+        ref={buttonRef}
         data-testid="dropdown-trigger"
         onClick={() => toggleDropdown()}
         className="w-full px-4 py-2 text-left bg-white border border-gray-300 rounded-md flex items-center justify-between"
@@ -72,14 +57,10 @@ export default function DropdownSelect({
       <DropdownOptions
         isOpen={isOpen}
         isSearchable={isSearchable}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        filteredOptions={filteredOptions}
         selectedOption={selectedOption}
         onOptionSelect={handleOptionSelect}
-        optionsRef={optionsRef}
-        searchInputRef={searchInputRef}
-        highlightedIndex={highlightedIndex}
+        options={options}
+        onClose={toggleDropdown}
       />
     </div>
   );
